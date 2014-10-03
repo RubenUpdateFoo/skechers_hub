@@ -1,84 +1,91 @@
 <?php
 class UsuariosController extends AppController
 {
-
 	/*----- CODIGOS DE ERRORES------*/
 	// 100 = ERROR DE VALIDACION
 	// 101 = TOKEN INVALIDO
 	// 102 = TOKEN INVALIDO 
   // 103 = TOKEN INVALIDO
 
-
 	var $name = 'Usuarios';
 
-  function app_ingresar_reporte(){
+  function app_ingresar_reporte()
+  {
 
-  Configure::write('debug',1);
-
-    $usuario_id = 3;   //usuario id
-    $local_id = 2;   //local id
-    $comentario = 'esto es un comentario';  //comentario
-    $latitud = '1.22232'; //latitud
-    $longitud = '3.00001'; //longitud
-
-    // $usuario_id = $_POST['usuario_id'];   
-    // $local_id = $_POST['local_id'];   
-    // $comentario = $_POST['comentario'];  
-    // $latitud = $_POST['latitud']; 
-    // $longitud = $_POST['longitud']; 
-
+    Configure::write('debug',1);
 
     $this->loadModel('Reporte');
-    $data = array('Reporte' => array('usuario_id' => $usuario_id,
-                                       'local_id' => $local_id,
-                                       'comentario' => $comentario,
-                                       'latitud' => $latitud,
-                                        'longitud' => $longitud ));  
-    $this->Reporte->create();
 
-    if ( $this->Reporte->save($data) )
-    {
-      die('reporte guardado OK');
-      $reporte_id = $this->Reporte->id;
-      if($this->guardarRespuestas($reporte_id, $respuestas)){ }
-    
-    }
-    else
-    {
-      die('ERROR: no se ha guardado el reporte');
-    }}
+    $respuestas_vec = $this->params['form'];//recibimos array de gonzo
+
+    $usuario_id = $respuestas_vec['usuario_id'];
+    $latitud    = $respuestas_vec['latitud'];     
+    $longitud   = $respuestas_vec['longitud'];
+    $comentario = 'esto es un comentario 4'; 
+    $local_id   = 2;
+
+          $respuestas = array();
+          foreach($respuestas_vec['respuestas'] as $resp)
+          {
+             $respuestas[] = $resp;
+          
+          }
+
+                  $data = array('Reporte' => array(  'usuario_id' => $usuario_id,
+                                                     'local_id'   => $local_id,
+                                                     'comentario' => $comentario,
+                                                     'latitud'    => $latitud,
+                                                     'longitud'   => $longitud ));  
+                   $this->Reporte->create();
+
+                   if ( $this->Reporte->save($data) )
+                   { 
+                     $reporte_id = $this->Reporte->id;
+
+                   if($this->guardarRespuestas($reporte_id, $respuestas))
+                      {
+                        die('reporte y respuestas guardados OK'); 
+                      }
+                  
+                   }
+                   else
+                   {
+                     die('ERROR: no se ha guardado el reporte');
+                   }
+  } //end function ingresar reporte
 
 
 
+
+
+
+ //
  //id usuario, id pregunta, id respuesta
  //valor, pregunta_id 
-  function app_guardarRespuestas($reporte_id, $respuestas){
+  function guardarRespuestas($reporte_id,$respuestas)
+  {
+            //prx($_POST)        
+            Configure::write('debug',1);        
+            
+            $this->loadModel('Respuesta');
 
-  Configure::write('debug',0);
-            //prx($_POST);
-              $data = array();
-              foreach ($respuestas as $key => $respuesta) {
-                  $dato = ('reporte_id' => $reporte_id,
-                            'pregunta_id' => $respuesta['pregunta_id'],
-                            'valor'   =>  $respuesta['valor']   );
-                  $data[] = $dato;
-              }
-                       if ( $this->Respuesta->saveAll($data) )
-            {  die('datos ingresados OK'); }
+            foreach($respuestas as $index => $respuesta)
+            {
+                     $respuestas[$index]['reporte_id'] = $reporte_id;
+            }
+            //prx($respuestas);
+        
+            if ( $this->Respuesta->saveAll($respuestas))
+                  { 
+                   die('datos ingresados OK'); 
+                  }
             else
-            { die('ERROR no se han ingresado datos');  }
+                  { 
+                   die('ERROR no se han ingresado datos');
+                  }
+} 
 
- /*
-                    [id] => 1
-                    [reporte_id] => 1
-                    [pregunta_id] => 1
-                    [valor] => valor de respuesta
-                    [created] => 2014-10-01 00:00:00
-                    [modified] => 2014-10-01 00:00:00
 
- */
-
- } 
 
 
 
@@ -141,6 +148,7 @@ function app_listar_preguntas(){
 																                                                         'Usuario.password' => $clave)));
       
 
+    
         $llave = 'LALA'.date('d-m-y');
         $token = md5($rut.$llave);
         
