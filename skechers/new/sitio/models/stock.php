@@ -36,16 +36,6 @@ class Stock extends AppModel
 				//'on'			=> 'update', // Solo valida en operaciones de 'create' o 'update'
 			),
 		),
-		'nombre' => array(
-			'notempty' => array(
-				'rule'			=> array('notempty'),
-				'last'			=> true,
-				//'message'		=> 'Mensaje de validación personalizado',
-				//'allowEmpty'	=> true,
-				//'required'		=> false,
-				//'on'			=> 'update', // Solo valida en operaciones de 'create' o 'update'
-			),
-		),
 		'cantidad' => array(
 			'numeric' => array(
 				'rule'			=> array('numeric'),
@@ -68,6 +58,15 @@ class Stock extends AppModel
 			'order'					=> '',
 			'counterCache'			=> false,
 			'counterScope'			=> array('Asociado.modelo' => 'Reporte')
+		),
+		'Producto' => array(
+			'className'				=> 'Producto',
+			'foreignKey'			=> 'producto_id',
+			'conditions'			=> '',
+			'fields'				=> '',
+			'order'					=> '',
+			'counterCache'			=> false,
+			'counterScope'			=> array('Asociado.modelo' => 'Producto')
 		)
 	);
 }
