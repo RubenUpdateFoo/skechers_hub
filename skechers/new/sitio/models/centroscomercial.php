@@ -26,6 +26,7 @@ class Centroscomercial extends AppModel
 	*/
 
 	// VALIDACIONES
+
 	var $validate = array(
 		'nombre' => array(
 			'notempty' => array(

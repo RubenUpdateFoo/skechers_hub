@@ -9,17 +9,36 @@ class UsuariosController extends AppController
   // 105 = CODIGO VACIO  
   var $name = 'Usuarios';
 
+  function app_ping(){
+   
+   $rut = $this->params['form']['rut'];
+   $token = $this->params['form']['token'];
+   $ping = $this->params['form']['ping'];
+
+   $llave = 'LALA'.date('d-m-y');
+   $verificador = md5($rut.$llave);
+
+   if($token == $verificador)
+   {
+    die(json_encode(array('respuesta'=>'pong')));
+   }
+
+   }//end function
+
+
+
 
   function app_ingresar_reporte()
   {
+
     Configure::write('debug',1);
-    
      // $rut = $_POST['rut'];
      // $token = $_POST['token'];
      // $llave = 'LALA'.date('d-m-y');
      // $verificador = md5($rut.$llave);
     // if($token == $verificador)
     // {
+
     $respuestas_vec = $this->params['form'];//recibimos array de gonzo
     $usuario_id     = $respuestas_vec['usuario_id'];
     $latitud        = $respuestas_vec['latitud'];     
@@ -28,8 +47,8 @@ class UsuariosController extends AppController
     $local_id       = 2; //corregir/setiar
     $foto_base      = 'hola mundo';
 
-    
     $test_stock = $this->params['form']['productos'];
+
     // $test_stock = array('producto_id' => 5,
     //                     'cantidad'    =>  69);
     //prx($this->params['form']);
@@ -50,10 +69,9 @@ class UsuariosController extends AppController
            { 
              $reporte_id = $this->Usuario->Reporte->id;
             // prx($reporte_id);
-
            if($this->guardarRespuestas($reporte_id, $respuestas))
               {
-               // prx($reporte_id);
+                //prx($reporte_id);
                json_encode(array('reporte y respuestas guardados OK'));
               // echo('reporte y respuestas guardados OK'); 
               }
@@ -77,14 +95,12 @@ class UsuariosController extends AppController
           else{
              die(json_encode(array('Error' => '103')));
              }  */
-
-  } //end function ingresar reporte
+   } //end function ingresar reporte
 
 
 
   function guardarRespuestas($reporte_id,$respuestas)
   {
-
             //prx($_POST)        
             Configure::write('debug',0);                
   
@@ -95,7 +111,7 @@ class UsuariosController extends AppController
         
             if ( $this->Usuario->Reporte->Respuesta->saveAll($respuestas))
                   { 
-                   //echo('datos ingresados OK °°'); 
+                   //echo('datos ingresados OK °_°'); 
                    json_encode(array('Respuestas guardado OK'));
                   }
             else
@@ -103,7 +119,6 @@ class UsuariosController extends AppController
                    die('ERROR no se han ingresado datos');
                   }
 } 
-
 
 
   function guardarFoto($reporte_id,$base)
@@ -128,7 +143,7 @@ class UsuariosController extends AppController
                   { 
                    die('ERROR no se han ingresado datos');
                   }
-} 
+ } 
 
 
   function guardarStock($reporte_id,$test)
@@ -178,12 +193,11 @@ class UsuariosController extends AppController
        ));
      die(json_encode(array('Producto' => $productos))); 
         }//end else
-    } //end if 27
+    } //end if 
      else
         {
           die(json_encode(array('Error' => '101')));
         }
- //prx($connection);
   }
 
 
@@ -234,6 +248,7 @@ function app_listar_preguntas(){
 
        $rut = $this->params['form']['rut'];
        $clave = $this->params['form']['clave'];
+
      //  prx($this->params);  
       // $rut = '1234';
       // $clave ='1234'; 

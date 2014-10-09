@@ -5,7 +5,117 @@ class AdministradoresController extends AppController
 
 	
 
-    function admin_agregar_usuario(){ }
+    function admin_ver_reportes($fecha =  null, $local = null, $usuario = null){
+    
+
+    //administradores/ver_reportes?fecha=2014-10-08&usuario=1&local=2
+		     Configure::write('debug',0);
+		    // prx($this->params['url']);
+		     $this->loadModel('Reporte');
+		     
+		  //    $conditions = null;
+		  //    $id_user = 1;
+		 	// 	if($fecha !== null ){
+				// 	$conditions[] = array('Reporte.created >=' => $fecha.' 00:00:00');
+				// }
+				// if($usuario !== null){
+				// 	$conditions[] = array('Reporte.usuario_id' => $usuario);
+				// }
+				// if($local !== null){
+				// 	$conditions[] = array('Reporte.local_id' => $local);
+				// }
+
+		  //    prx($conditions);
+            // $fecha = '2014-10-07 17:00:25'
+		    $fecha = null; $usuario =null; $local = null;
+
+
+			if(isset($fecha) && isset($usuario) && isset($local) )
+			{
+				$conditions =array('Reporte.usuario_id'=>$usuario,
+					                'Reporte.local_id' => $local,
+									'Reporte.created' => $fecha );	
+			}
+			elseif($fecha == null && isset($usuario) && isset($local))
+			{
+				$conditions = array('Reporte.usuario_id'=>$usuario,'Reporte.local_id'=>$local); 
+				               	 
+			}
+			elseif($fecha == null && $usuario == null && isset($local))
+			{
+				$conditions = array('or'=>array(array('Reporte.local_id'=>$local)
+						                     ),
+				               );	         	 
+			}
+			elseif($usuario == null && isset($fecha) && $local == null)
+			{
+				$conditions = array('or'=>array(array('Reporte.created'=>$fecha)
+						                     ),
+				               );	         	 
+			}
+			elseif(isset($usuario) && isset($fecha) && $local == null)
+			{
+				$conditions = array('or'=>array(array('Reporte.created'=>$fecha),
+					                            array('Reporte.usuario_id' => $usuario)
+						                     ),
+				               );	         	 
+			}	
+			elseif(isset($local) && isset($fecha) && $usuario == null)
+			{
+				$conditions = array('or'=>array(array('Reporte.created'=>$fecha),
+					                            array('Local.usuario_id' => $local)
+						                     ),
+				               );	         	 
+			}
+
+			elseif($local == null && $fecha == null && isset($usuario))
+			{
+				$conditions = array('or'=>array(array('Reporte.usuario_id'=>$usuario)
+						                     ),
+				               );	         	 
+			}
+			elseif(isset($usuario) && $fecha == null && isset($local))
+			{
+				$conditions = array('or'=>array(array('Reporte.local_id'=>$local),
+					                           array('Reporte.usuario_id' => $usuario)
+						                     ),
+				               );	         	 
+			}
+
+ 
+
+			$consulta = $this->Reporte->find('all', array('limit' => 20,
+														  'contain' => array('Usuario' => array('fields' => array('Usuario.nombre')
+														  										),
+														  					 'Local'  => array('fields' => array('Local.nombre')
+														  					 				  )
+														  					),
+														  'fields' => array('Reporte.id', 'Reporte.usuario_id', 'Reporte.created'),
+														  'conditions' => $conditions
+														  )
+											);
+
+				if($fecha == null && $usuario == null && $local == null )
+			   {
+			       $consulta = $this->Reporte->find('all', array('limit' => 20,
+														  'contain' => array('Usuario' => array('fields' => array('Usuario.nombre')
+														  										),
+														  					 'Local'  => array('fields' => array('Local.nombre')
+														  					 				  )
+														  					),
+														  'fields' => array('Reporte.id', 'Reporte.usuario_id', 'Reporte.created')
+														  )
+											      );
+			   }
+
+
+
+			
+				$this->set(compact('consulta'));
+
+
+     }//end function
+
 
 	function admin_login() { }
 
